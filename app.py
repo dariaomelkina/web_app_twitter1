@@ -1,5 +1,5 @@
 import sys
-path = '/home/dariaomelkina/.virtualenvs/myvirtualenv'
+path = '/home/dariaomelkina/.local/lib/python3.6/site-packages'
 if path not in sys.path:
     sys.path.append(path)
 
