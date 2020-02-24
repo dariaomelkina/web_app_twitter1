@@ -1,8 +1,6 @@
-import sys
-path = '/home/dariaomelkina/.local/lib/python3.6/site-packages'
-if path not in sys.path:
-    sys.path.append(path)
-
+import urllib.request, urllib.parse, urllib.error
+import twurl
+import ssl
 import folium
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
@@ -15,22 +13,22 @@ geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2, max_retries=4)
 app = Flask(__name__)
 
 
-def read_file(path):
-    """
-    () -> dict
-    Return data from the json file.
-    """
-    with open(path) as file:
-        data1 = file.read()
-    data = json.loads(data1, encoding=None, cls=None, object_hook=None, parse_float=None, parse_int=None,
-                      parse_constant=None,
-                      object_pairs_hook=None)
-    return data
+def twitter_func(path):
+    """"""
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    TWITTER_URL = 'https://api.twitter.com/1.1/friends/list.json'
+    url = twurl.augment(TWITTER_URL, {'screen_name': path, 'count': '5'})
+    connection = urllib.request.urlopen(url, context=ctx)
+    data = connection.read().decode()
+    js = json.loads(data)
+    return js
 
 
 def generate_tuples(x):
     """
-    Ruterns a list of tuples with name of the friend and his/her location.
+    Returns a list of tuples with name of the friend and his/her location.
     """
     lst = []
     for i in x['users']:
@@ -43,18 +41,18 @@ def generate_tuples(x):
 def make_map(path):
     my_map = folium.Map(tiles='Stamen Terrain')
     fg_friends = folium.FeatureGroup(name="Friends")
-    data = read_file(path)
+    data = twitter_func(path)
     my_tuples = generate_tuples(data)
     for i in my_tuples:
         try:
             location_geo = geolocator.geocode(i[1], timeout=5)
             latitude_geo, longitude_geo = location_geo.latitude, location_geo.longitude
             fg_friends.add_child(folium.CircleMarker(location=(latitude_geo, longitude_geo),
-                                                    radius=10,
-                                                    popup=i[0],
-                                                    fill_color='yellow',
-                                                    color='blue',
-                                                    fill_opacity=0.6))
+                                                     radius=10,
+                                                     popup=i[0],
+                                                     fill_color='yellow',
+                                                     color='blue',
+                                                     fill_opacity=0.6))
         except:
             continue
     my_map.add_child(fg_friends)
