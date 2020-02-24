@@ -39,7 +39,7 @@ def generate_tuples(x):
 
 
 def make_map(path):
-    my_map = folium.Map(tiles='Stamen Terrain')
+    my_map = folium.Map(location=[0, 0], zoom_start=1.5, tiles='Stamen Terrain')
     fg_friends = folium.FeatureGroup(name="Friends")
     data = twitter_func(path)
     my_tuples = generate_tuples(data)
@@ -57,7 +57,7 @@ def make_map(path):
             continue
     my_map.add_child(fg_friends)
     my_map.add_child(folium.LayerControl())
-    my_map.save('templates/Map.html')
+    my_map.save('/home/dariaomelkina/web_app_twitter1/templates/Map.html')
 
 
 @app.route("/")
@@ -67,12 +67,15 @@ def index():
 
 @app.route("/map", methods=["POST"])
 def web_map():
-    path = request.form.get("name")
-    if not path:
-        return 'failure'
-    make_map(path)
-    return render_template("Map.html")
+    try:
+        path = request.form.get("name")
+        if not path:
+            return render_template("failure.html")
+        make_map(path)
+        return render_template("Map.html")
+    except:
+        return render_template("failure.html")
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()
