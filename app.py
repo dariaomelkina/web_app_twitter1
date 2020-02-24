@@ -11,6 +11,7 @@ geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2, max_retries=4)
 
 
 app = Flask(__name__)
+app.debug = True
 
 
 def twitter_func(path):
