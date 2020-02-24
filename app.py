@@ -15,7 +15,10 @@ app.debug = True
 
 
 def twitter_func(path):
-    """"""
+    """
+    (str) -> dict
+    Return dict with information from Twitter API.
+    """
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -40,6 +43,10 @@ def generate_tuples(x):
 
 
 def make_map(path):
+    """
+    (str) -> None
+    Generates map, based on information from Twitter API.
+    """
     my_map = folium.Map(location=[0, 0], zoom_start=1.5, tiles='Stamen Terrain')
     fg_friends = folium.FeatureGroup(name="Friends")
     data = twitter_func(path)
