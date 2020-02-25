@@ -23,7 +23,7 @@ def twitter_func(path):
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     TWITTER_URL = 'https://api.twitter.com/1.1/friends/list.json'
-    url = twurl.augment(TWITTER_URL, {'screen_name': path, 'count': '5'})
+    url = twurl.augment(TWITTER_URL, {'screen_name': path, 'count': '10'})
     connection = urllib.request.urlopen(url, context=ctx)
     data = connection.read().decode()
     js = json.loads(data)
